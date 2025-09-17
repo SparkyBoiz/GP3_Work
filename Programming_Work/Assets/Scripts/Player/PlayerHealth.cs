@@ -13,6 +13,8 @@ namespace Player
         public UnityEvent onHealthChanged;
         public UnityEvent onDeath;
 
+        private bool _isDead = false;
+
         private void Awake()
         {
             currentHealth = maxHealth;
@@ -20,6 +22,8 @@ namespace Player
 
         public void TakeDamage(int amount)
         {
+            if (_isDead) return;
+
             currentHealth -= amount;
             currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
             onHealthChanged?.Invoke();
@@ -32,6 +36,8 @@ namespace Player
 
         public void RestoreHealth(int amount)
         {
+            if (_isDead) return;
+
             currentHealth += amount;
             currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
             onHealthChanged?.Invoke();
@@ -39,8 +45,20 @@ namespace Player
 
         private void Die()
         {
+            if (_isDead) return;
+
+            _isDead = true;
             Debug.Log("Player Died");
             onDeath?.Invoke();
+            
+            var movement = GetComponent<PlayerMovement>();
+            if (movement != null)
+                movement.enabled = false;
+
+            var look = GetComponent<PlayerLook>();
+            if (look != null)
+                look.enabled = false;
+            
         }
     }
 }
