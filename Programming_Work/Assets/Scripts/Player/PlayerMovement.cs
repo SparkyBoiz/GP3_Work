@@ -49,11 +49,16 @@ namespace Player
 
         private void Move()
         {
-            Vector3 direction = new Vector3(_moveInput.x, 0f, _moveInput.y);
+            Vector3 forward = transform.forward;
+            Vector3 right = transform.right;
+
+            Vector3 direction = (right * _moveInput.x + forward * _moveInput.y).normalized;
             Vector3 velocity = direction * MoveSpeed;
+
             Vector3 currentVelocity = _rb.linearVelocity;
             _rb.linearVelocity = new Vector3(velocity.x, currentVelocity.y, velocity.z);
         }
+
     
         private void Jump()
         {
