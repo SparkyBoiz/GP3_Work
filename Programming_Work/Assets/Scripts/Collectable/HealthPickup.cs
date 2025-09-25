@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using Player;
+using Managers;
 
 namespace Collectable
 {
@@ -32,7 +33,8 @@ namespace Collectable
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag(playerTag))
+            string tagToCheck = string.IsNullOrEmpty(playerTag) ? Managers.PlayerService.PlayerTag : playerTag;
+            if (other.CompareTag(tagToCheck))
             {
                 _playerInRange = true;
                 _player = other.gameObject;
@@ -46,7 +48,8 @@ namespace Collectable
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.CompareTag(playerTag))
+            string tagToCheck = string.IsNullOrEmpty(playerTag) ? Managers.PlayerService.PlayerTag : playerTag;
+            if (other.CompareTag(tagToCheck))
             {
                 _playerInRange = false;
                 _player = null;
@@ -58,6 +61,10 @@ namespace Collectable
             if (_player != null)
             {
                 PlayerHealth health = _player.GetComponent<PlayerHealth>();
+                if (health == null && PlayerService.Instance != null)
+                {
+                    health = PlayerService.Instance.Health;
+                }
                 if (health != null)
                 {
                     health.RestoreHealth(restoreAmount);

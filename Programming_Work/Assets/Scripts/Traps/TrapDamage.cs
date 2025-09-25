@@ -1,5 +1,6 @@
 using UnityEngine;
 using Player;
+using Managers;
 
 namespace Traps
 {
@@ -28,7 +29,8 @@ namespace Traps
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag(playerTag))
+            string tagToCheck = string.IsNullOrEmpty(playerTag) ? Managers.PlayerService.PlayerTag : playerTag;
+            if (other.CompareTag(tagToCheck))
             {
                 if (damageOnEnter)
                 {
@@ -40,7 +42,8 @@ namespace Traps
 
         private void OnTriggerStay(Collider other)
         {
-            if (damageOverTime && other.CompareTag(playerTag))
+            string tagToCheck = string.IsNullOrEmpty(playerTag) ? Managers.PlayerService.PlayerTag : playerTag;
+            if (damageOverTime && other.CompareTag(tagToCheck))
             {
                 _timeSinceLastDamage += Time.deltaTime;
                 if (_timeSinceLastDamage >= damageInterval)
@@ -54,6 +57,10 @@ namespace Traps
         private void ApplyDamage(Collider playerCollider)
         {
             PlayerHealth health = playerCollider.GetComponent<PlayerHealth>();
+            if (health == null && PlayerService.Instance != null)
+            {
+                health = PlayerService.Instance.Health;
+            }
             if (health != null)
             {
                 health.TakeDamage(damageAmount);

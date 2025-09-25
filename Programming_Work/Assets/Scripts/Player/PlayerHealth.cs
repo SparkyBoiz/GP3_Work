@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using Managers;
 
 namespace Player
 {
@@ -50,6 +51,12 @@ namespace Player
             _isDead = true;
             Debug.Log("Player Died");
             onDeath?.Invoke();
+
+            // Notify death manager if present
+            if (DeathHandler.Instance != null)
+            {
+                DeathHandler.Instance.OnPlayerDeath();
+            }
             
             var movement = GetComponent<PlayerMovement>();
             if (movement != null)

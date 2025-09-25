@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using Player;
+using Managers;
 
 namespace Enemies
 {
@@ -59,12 +60,10 @@ namespace Enemies
         private void Awake()
         {
             if (agent == null) agent = GetComponent<NavMeshAgent>();
-            var go = GameObject.FindGameObjectWithTag("Player");
-            if (go != null)
-            {
-                _player = go.transform;
-                _playerHealth = go.GetComponent<PlayerHealth>();
-            }
+
+            var service = PlayerService.Instance;
+            _player = service.PlayerTransform;
+            _playerHealth = service.Health;
 
             agent.stoppingDistance = Mathf.Max(0.1f, attackRange * 0.8f);
             SwitchState(patrolPoints != null && patrolPoints.Length > 0 ? State.Patrol : State.Idle);
